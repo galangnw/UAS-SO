@@ -100,7 +100,7 @@ export default function JoinRoom({ onSwitchToCreate, onJoinRoom, onToast }) {
         </button>
       </form>
 
-      <h2 className="mb-3 text-center text-xl font-black">
+      <h2 className="mb-3 text-center text-xl font-black [text-shadow:2px_2px_0_#0A1A4A]">
         ATAU PILIH ROOM PUBLIK
       </h2>
 
@@ -137,11 +137,11 @@ export default function JoinRoom({ onSwitchToCreate, onJoinRoom, onToast }) {
         ))}
 
         {!loadingRooms && rooms.length === 0 && (
-          <p className="text-center font-bold">Belum ada room publik.</p>
+          <p className="text-center font-bold [text-shadow:2px_2px_0_#0A1A4A]">Belum ada room publik.</p>
         )}
 
         {loadingRooms && (
-          <p className="text-center font-bold">Memuat daftar room...</p>
+          <p className="text-center font-bold [text-shadow:2px_2px_0_#0A1A4A]">Memuat daftar room...</p>
         )}
       </div>
 
