@@ -9,7 +9,7 @@ import sparkle1 from '../assets/lobby/sparkle-1.svg';
 
 const CARD_COLORS = ['pink', 'blue', 'orange', 'yellow'];
 const GAME_ICONS = [game1, game2, game3];
-const GAME_SUBTITLE = 'Stick Brawl · Jellyfish Deadlock · Game 3';
+const GAME_SUBTITLE = 'Tanpa Aturan · Mutex · Semaphore';
 
 function Header({ onBack }) {
   return (
@@ -142,7 +142,7 @@ export default function Lobby({
 
           <div className="ml-3 min-w-0 -translate-y-[1px]">
             <p className="text-[16px] font-extrabold leading-[21px] text-[#12307A]">
-              3 Game Berurutan
+              3 Ronde Berurutan
             </p>
             <p className="truncate text-[10.5px] font-bold leading-[21px] text-[#12307A]">
               {GAME_SUBTITLE}
