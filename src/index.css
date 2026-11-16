@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap');
 @import "tailwindcss";
 
+<<<<<<< HEAD
 @theme {
   --color-brand-blue-top: #1B3FA6;
   --color-brand-blue-bottom: #3C94E6;
@@ -46,4 +47,9 @@
   .stickman-goyang {
     animation: none;
   }
+=======
+@utility text-bubble-outline {
+  -webkit-text-stroke: 14px #0A1A4A;
+  paint-order: stroke fill;
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
 }

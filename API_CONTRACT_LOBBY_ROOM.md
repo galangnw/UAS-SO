@@ -284,6 +284,7 @@ interface RoomState {
 ## 6. Catatan Implementasi
 
 - **Database**: Hanya dipanggil saat `join`, `leave`, `kick`, `set_ready` (update `room_players`), dan `tournament:start` (update `rooms.status`).
+<<<<<<< HEAD
 - **Gameplay (WASD, grab resource, skor)**: **TIDAK** ada di kontrak ini. Kontrak terpisah untuk minigame (jumlah & tema belum final).
 - **Connection Pool**: Gunakan PgBouncer (port 6543) dari Supabase.
 - **SSL**: `rejectUnauthorized: false` wajib untuk koneksi Supabase.
@@ -319,3 +320,8 @@ B tetap wajib `emit('room:join', { code })`. Data dari A hanya untuk render pert
 - **Hanya B** yang membuat koneksi socket untuk room. A tidak membuka socket.
 - **Satu instance socket** untuk seluruh aplikasi (`src/lib/socket.js`).
 - **Satu `App.jsx`** — milik A. B cukup mengganti komponen halaman room, tidak membuat routing sendiri.
+=======
+- **Gameplay (WASD, grab resource, skor)**: **TIDAK** ada di kontrak ini. Kontrak terpisah untuk Minigame 1-3.
+- **Connection Pool**: Gunakan PgBouncer (port 6543) dari Supabase.
+- **SSL**: `rejectUnauthorized: false` wajib untuk koneksi Supabase.
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
