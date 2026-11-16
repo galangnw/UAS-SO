@@ -284,6 +284,44 @@ interface RoomState {
 ## 6. Catatan Implementasi
 
 - **Database**: Hanya dipanggil saat `join`, `leave`, `kick`, `set_ready` (update `room_players`), dan `tournament:start` (update `rooms.status`).
+<<<<<<< HEAD
+- **Gameplay (WASD, grab resource, skor)**: **TIDAK** ada di kontrak ini. Kontrak terpisah untuk minigame (jumlah & tema belum final).
+- **Connection Pool**: Gunakan PgBouncer (port 6543) dari Supabase.
+- **SSL**: `rejectUnauthorized: false` wajib untuk koneksi Supabase.
+
+---
+
+## 7. Pembagian Pemilik Halaman (Frontend A & B)
+
+Satu repo, satu aplikasi. Keduanya memakai kontrak ini.
+
+| Halaman | Pemilik | Butuh |
+|---|---|---|
+| Guest / identitas otomatis | A | `POST /api/auth/guest` |
+| `game - 5 Buat Room` | A | `POST /api/rooms` |
+| `game - 5 Gabung Room` | A | `GET /api/rooms`, `GET /api/rooms/:code` |
+| `game - Lobi (Host)` / `(Tamu)` | B | `room:join` dan semua event ruang tunggu |
+| Popup bubarkan room | B | `room:leave` → `room:disbanded` |
+
+### Serah terima A → B
+
+Setelah REST buat/gabung room sukses, A menyerahkan:
+
+- **Wajib**: `code` room (idealnya juga ada di URL, misal `/room/:code`, agar tahan refresh).
+- **Opsional**: objek room hasil REST (`roomId`, `code`, `name`, `maxPlayers`, ...) untuk render awal tanpa layar loading.
+
+B tetap wajib `emit('room:join', { code })`. Data dari A hanya untuk render pertama;
+`room:state` dari server adalah sumber kebenaran.
+
+`GET /api/rooms/:code` dipakai B **hanya sebagai fallback** saat halaman di-refresh atau dibuka lewat link langsung — bukan setiap kali navigasi.
+
+### Aturan yang tidak boleh dilanggar
+
+- **Hanya B** yang membuat koneksi socket untuk room. A tidak membuka socket.
+- **Satu instance socket** untuk seluruh aplikasi (`src/lib/socket.js`).
+- **Satu `App.jsx`** — milik A. B cukup mengganti komponen halaman room, tidak membuat routing sendiri.
+=======
 - **Gameplay (WASD, grab resource, skor)**: **TIDAK** ada di kontrak ini. Kontrak terpisah untuk Minigame 1-3.
 - **Connection Pool**: Gunakan PgBouncer (port 6543) dari Supabase.
 - **SSL**: `rejectUnauthorized: false` wajib untuk koneksi Supabase.
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89

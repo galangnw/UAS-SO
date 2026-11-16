@@ -1,7 +1,17 @@
+<<<<<<< HEAD
+import { useEffect, useRef, useState } from 'react';
+import { api } from './lib/api';
+import { socket } from './lib/socket';
+import CreateRoom from './components/CreateRoom';
+import JoinRoom from './components/JoinRoom';
+import Lobby from './components/Lobby';
+import Toast from './components/Toast';
+=======
 import { useEffect, useState } from 'react';
 import { api, createRoomSocket } from './lib/api';
 import CreateRoom from './components/CreateRoom';
 import JoinRoom from './components/JoinRoom';
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
 
 function newGuestName() {
   return `Pemain${Math.floor(1000 + Math.random() * 9000)}`;
@@ -10,11 +20,18 @@ function newGuestName() {
 export default function App() {
   const [user, setUser] = useState(null);
   const [view, setView] = useState('join');
+<<<<<<< HEAD
+=======
   const [socket, setSocket] = useState(null);
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
   const [roomCode, setRoomCode] = useState('');
   const [roomState, setRoomState] = useState(null);
   const [toast, setToast] = useState('');
   const [authError, setAuthError] = useState('');
+<<<<<<< HEAD
+  const leavingRef = useRef(false);
+=======
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
 
   useEffect(() => {
     let cancelled = false;
@@ -70,7 +87,11 @@ export default function App() {
   }, [toast]);
 
   useEffect(() => {
+<<<<<<< HEAD
+    if (!roomCode || !user?.userId) return undefined;
+=======
     if (!socket || !roomCode || !user?.userId) return undefined;
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
 
     const handleConnect = () => {
       socket.emit('auth', user.userId);
@@ -119,7 +140,19 @@ export default function App() {
     };
 
     const handleToast = (payload) => {
+<<<<<<< HEAD
+      if (typeof payload === 'string') {
+        setToast(payload);
+        return;
+      }
+
+      setToast({
+        type: payload?.type || 'info',
+        message: payload?.message || 'Terjadi kesalahan.',
+      });
+=======
       setToast(payload?.message || 'Terjadi kesalahan.');
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
     };
 
     const handleKicked = () => {
@@ -137,7 +170,14 @@ export default function App() {
     };
 
     const handleTournamentStarting = (payload) => {
+<<<<<<< HEAD
+      setToast({
+        type: 'info',
+        message: `Game dimulai dalam ${payload?.countdown ?? 3}...`,
+      });
+=======
       setToast(`Turnamen dimulai! Minigame ${payload?.firstMinigame || 1}`);
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
     };
 
     const handleConnectError = () => {
@@ -155,6 +195,11 @@ export default function App() {
     socket.on('tournament:starting', handleTournamentStarting);
     socket.on('toast', handleToast);
 
+<<<<<<< HEAD
+    // Jika socket sudah terhubung (mis. reconnect), langsung auth + join.
+    if (socket.connected) handleConnect();
+=======
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
     socket.connect();
 
     return () => {
@@ -170,7 +215,11 @@ export default function App() {
       socket.off('toast', handleToast);
       socket.disconnect();
     };
+<<<<<<< HEAD
+  }, [roomCode, user?.userId]);
+=======
   }, [socket, roomCode, user?.userId]);
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
 
   function enterRoom(code) {
     if (!user?.userId) {
@@ -180,11 +229,31 @@ export default function App() {
 
     setRoomState(null);
     setRoomCode(code);
+<<<<<<< HEAD
+=======
     setSocket(createRoomSocket());
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
     setView('lobby');
   }
 
   function leaveRoom() {
+<<<<<<< HEAD
+    if (leavingRef.current) return;
+    leavingRef.current = true;
+
+    if (socket.connected) {
+      socket.emit('room:leave', { code: roomCode });
+    }
+
+    // Beri server waktu memproses room:leave sebelum socket diputus.
+    setTimeout(() => {
+      socket.disconnect();
+      setRoomState(null);
+      setRoomCode('');
+      setView('join');
+      leavingRef.current = false;
+    }, 300);
+=======
     if (socket?.connected) {
       socket.emit('room:leave', { code: roomCode });
       socket.disconnect();
@@ -194,6 +263,7 @@ export default function App() {
     setRoomState(null);
     setRoomCode('');
     setView('join');
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
   }
 
   function toggleReady() {
@@ -201,7 +271,11 @@ export default function App() {
       (player) => player.userId === user?.userId,
     );
 
+<<<<<<< HEAD
+    if (!socket.connected || !myPlayer) return;
+=======
     if (!socket?.connected || !myPlayer) return;
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
 
     socket.emit('room:set_ready', {
       code: roomCode,
@@ -210,11 +284,19 @@ export default function App() {
   }
 
   function startTournament() {
+<<<<<<< HEAD
+    socket.emit('tournament:start', { code: roomCode });
+  }
+
+  function kickPlayer(targetUserId) {
+    socket.emit('room:kick', { code: roomCode, targetUserId });
+=======
     socket?.emit('tournament:start', { code: roomCode });
   }
 
   function kickPlayer(targetUserId) {
     socket?.emit('room:kick', { code: roomCode, targetUserId });
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
   }
 
   if (!user) {
@@ -225,6 +307,11 @@ export default function App() {
     );
   }
 
+<<<<<<< HEAD
+  return (
+    <main className="flex min-h-screen justify-center bg-blue-900 p-4 text-white">
+      <section className="relative flex h-[min(844px,calc(100vh-2rem))] w-full max-w-[399px] flex-col overflow-hidden rounded-3xl border border-blue-800 bg-[url('/background.png')] bg-cover bg-center text-white shadow-2xl">
+=======
   const me = roomState?.me;
   const myPlayer = roomState?.players?.find(
     (player) => player.userId === user.userId,
@@ -252,6 +339,7 @@ export default function App() {
           </header>
         )}
 
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
         {view === 'join' && (
           <JoinRoom
             onSwitchToCreate={() => setView('create')}
@@ -269,6 +357,21 @@ export default function App() {
         )}
 
         {view === 'lobby' && (
+<<<<<<< HEAD
+          <Lobby
+            roomCode={roomCode}
+            roomState={roomState}
+            userId={user.userId}
+            onLeave={leaveRoom}
+            onToggleReady={toggleReady}
+            onKick={kickPlayer}
+            onStart={startTournament}
+            onToast={setToast}
+          />
+        )}
+
+        <Toast toast={toast} />
+=======
           <div className="flex flex-1 flex-col gap-4 font-['Baloo_2']">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-black">LOBI</h1>
@@ -350,6 +453,7 @@ export default function App() {
             {toast}
           </div>
         )}
+>>>>>>> 94e911e2c5920961426dbb809e762ecf642e1d89
       </section>
     </main>
   );
