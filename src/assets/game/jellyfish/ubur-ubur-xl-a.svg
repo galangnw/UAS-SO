@@ -1,0 +1,17 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="153.6" height="169.6" viewBox="0 0 153.6 169.6" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Ubur-ubur animasi / XL">
+<path id="tentakel 1 luar" d="M38.4 112C36.48 123.2 33.6 128 33.6 139.2C33.6 148.8 30.4 152 30.4 158.4" stroke-width="12.8" stroke-linecap="round" stroke-linejoin="round" stroke="#E8509A"/>
+<path id="tentakel 2 luar" d="M60.8 115.2C62.08 126.4 64 131.2 64 142.4C64 152 67.2 155.2 67.2 161.6" stroke-width="12.8" stroke-linecap="round" stroke-linejoin="round" stroke="#E8509A"/>
+<path id="tentakel 3 luar" d="M86.4 115.2C85.12 126.4 83.2 131.2 83.2 142.4C83.2 152 80 155.2 80 161.6" stroke-width="12.8" stroke-linecap="round" stroke-linejoin="round" stroke="#E8509A"/>
+<path id="tentakel 4 luar" d="M108.8 112C110.72 123.2 113.6 128 113.6 139.2C113.6 148.8 116.8 152 116.8 158.4" stroke-width="12.8" stroke-linecap="round" stroke-linejoin="round" stroke="#E8509A"/>
+<path id="tentakel 1 dalam" d="M38.4 112C36.48 123.2 33.6 128 33.6 139.2C33.6 148.8 30.4 152 30.4 158.4" stroke-width="5.6" stroke-linecap="round" stroke="#F4AECF"/>
+<path id="tentakel 2 dalam" d="M60.8 115.2C62.08 126.4 64 131.2 64 142.4C64 152 67.2 155.2 67.2 161.6" stroke-width="5.6" stroke-linecap="round" stroke="#F4AECF"/>
+<path id="tentakel 3 dalam" d="M86.4 115.2C85.12 126.4 83.2 131.2 83.2 142.4C83.2 152 80 155.2 80 161.6" stroke-width="5.6" stroke-linecap="round" stroke="#F4AECF"/>
+<path id="tentakel 4 dalam" d="M108.8 112C110.72 123.2 113.6 128 113.6 139.2C113.6 148.8 116.8 152 116.8 158.4" stroke-width="5.6" stroke-linecap="round" stroke="#F4AECF"/>
+<path id="kepala" d="M9.6 96C6.4 41.6 41.6 6.4 80 6.4C121.6 6.4 144 41.6 140.8 80C139.2 99.2 128 112 112 115.2H32C16 112 9.6 105.6 9.6 96Z" fill="#F4AECF" stroke-width="8" stroke-linejoin="round" stroke="#E8509A"/>
+<path id="bintik 1" d="M48 54.4C56.8366 54.4 64 48.6692 64 41.6C64 34.5308 56.8366 28.8 48 28.8C39.1634 28.8 32 34.5308 32 41.6C32 48.6692 39.1634 54.4 48 54.4Z" fill="#EC6AA3"/>
+<path id="bintik 2" d="M96 60.8C101.302 60.8 105.6 57.9346 105.6 54.4C105.6 50.8654 101.302 48 96 48C90.6981 48 86.4 50.8654 86.4 54.4C86.4 57.9346 90.6981 60.8 96 60.8Z" fill="#EC6AA3"/>
+<path id="bintik 3" d="M38.4 86.4C43.7019 86.4 48 83.5346 48 80C48 76.4654 43.7019 73.6 38.4 73.6C33.0981 73.6 28.8 76.4654 28.8 80C28.8 83.5346 33.0981 86.4 38.4 86.4Z" fill="#EC6AA3"/>
+<path id="kilau" d="M102.4 22.4C118.4 28.8 128 44.8 129.6 60.8" stroke-width="6.4" stroke-linecap="round" stroke="white" stroke-opacity="0.6"/>
+</g>
+</svg>

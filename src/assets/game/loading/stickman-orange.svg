@@ -1,0 +1,25 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="146" height="218" viewBox="0 0 146 218" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Stickman orange">
+<path id="Vector" d="M74 102L26 138" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" stroke="#0A1A4A"/>
+<path id="Vector_2" d="M74 102L120 92" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" stroke="#0A1A4A"/>
+<path id="Vector_3" d="M74 62V144" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" stroke="#0A1A4A"/>
+<path id="Vector_4" d="M74 144L42 192" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" stroke="#0A1A4A"/>
+<path id="Vector_5" d="M74 144L106 192" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" stroke="#0A1A4A"/>
+<path id="Vector_6" d="M74 102L26 138" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" stroke="#0BD004"/>
+<path id="Vector_7" d="M74 102L120 92" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" stroke="#0BD004"/>
+<path id="Vector_8" d="M74 62V144" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" stroke="#0BD004"/>
+<path id="Vector_9" d="M74 144L42 192" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" stroke="#0BD004"/>
+<path id="Vector_10" d="M74 144L106 192" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" stroke="#0BD004"/>
+<path id="Vector_11" d="M74 103C96.6437 103 115 84.6437 115 62C115 39.3563 96.6437 21 74 21C51.3563 21 33 39.3563 33 62C33 84.6437 51.3563 103 74 103Z" fill="#0A1A4A"/>
+<path id="Vector_12" d="M74 98C93.8823 98 110 81.8823 110 62C110 42.1177 93.8823 26 74 26C54.1177 26 38 42.1177 38 62C38 81.8823 54.1177 98 74 98Z" fill="url(#paint0_radial_0_74)"/>
+<path id="Vector_13" d="M63.2 46.52C69.1647 46.52 74 44.1023 74 41.12C74 38.1377 69.1647 35.72 63.2 35.72C57.2353 35.72 52.4 38.1377 52.4 41.12C52.4 44.1023 57.2353 46.52 63.2 46.52Z" fill="white" fill-opacity="0.55"/>
+<path id="Vector_14" d="M45.8261 54.9565L70.087 63.5652" stroke-width="7.04348" stroke-linecap="round" stroke="white"/>
+<path id="Vector_15" d="M77.913 63.5652L102.174 54.9565" stroke-width="7.04348" stroke-linecap="round" stroke="white"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_74" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(63.2 47.6) scale(57.6)">
+<stop stop-color="#78E83B"/>
+<stop offset="1" stop-color="#2BF335"/>
+</radialGradient>
+</defs>
+</svg>

@@ -1,0 +1,17 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="48" height="53" viewBox="0 0 48 53" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Ubur-ubur animasi / M">
+<path id="tentakel 1 luar" d="M12 35C11.4 38.5 10.5 40 10.5 43.5C10.5 46.5 9.5 47.5 9.5 49.5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke="#E8509A"/>
+<path id="tentakel 2 luar" d="M19 36C19.4 39.5 20 41 20 44.5C20 47.5 21 48.5 21 50.5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke="#E8509A"/>
+<path id="tentakel 3 luar" d="M27 36C26.6 39.5 26 41 26 44.5C26 47.5 25 48.5 25 50.5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke="#E8509A"/>
+<path id="tentakel 4 luar" d="M34 35C34.6 38.5 35.5 40 35.5 43.5C35.5 46.5 36.5 47.5 36.5 49.5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke="#E8509A"/>
+<path id="tentakel 1 dalam" d="M12 35C11.4 38.5 10.5 40 10.5 43.5C10.5 46.5 9.5 47.5 9.5 49.5" stroke-width="1.75" stroke-linecap="round" stroke="#F4AECF"/>
+<path id="tentakel 2 dalam" d="M19 36C19.4 39.5 20 41 20 44.5C20 47.5 21 48.5 21 50.5" stroke-width="1.75" stroke-linecap="round" stroke="#F4AECF"/>
+<path id="tentakel 3 dalam" d="M27 36C26.6 39.5 26 41 26 44.5C26 47.5 25 48.5 25 50.5" stroke-width="1.75" stroke-linecap="round" stroke="#F4AECF"/>
+<path id="tentakel 4 dalam" d="M34 35C34.6 38.5 35.5 40 35.5 43.5C35.5 46.5 36.5 47.5 36.5 49.5" stroke-width="1.75" stroke-linecap="round" stroke="#F4AECF"/>
+<path id="kepala" d="M3 30C2 13 13 2 25 2C38 2 45 13 44 25C43.5 31 40 35 35 36H10C5 35 3 33 3 30Z" fill="#F4AECF" stroke-width="2.5" stroke-linejoin="round" stroke="#E8509A"/>
+<path id="bintik 1" d="M15 17C17.7614 17 20 15.2091 20 13C20 10.7909 17.7614 9 15 9C12.2386 9 10 10.7909 10 13C10 15.2091 12.2386 17 15 17Z" fill="#EC6AA3"/>
+<path id="bintik 2" d="M30 19C31.6569 19 33 18.1046 33 17C33 15.8954 31.6569 15 30 15C28.3431 15 27 15.8954 27 17C27 18.1046 28.3431 19 30 19Z" fill="#EC6AA3"/>
+<path id="bintik 3" d="M12 27C13.6569 27 15 26.1046 15 25C15 23.8954 13.6569 23 12 23C10.3431 23 9 23.8954 9 25C9 26.1046 10.3431 27 12 27Z" fill="#EC6AA3"/>
+<path id="kilau" d="M32 7C37 9 40 14 40.5 19" stroke-width="2" stroke-linecap="round" stroke="white" stroke-opacity="0.6"/>
+</g>
+</svg>

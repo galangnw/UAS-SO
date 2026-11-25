@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../lib/api';
+import { ROOM_MAX_PLAYERS } from '../config/gameRules';
 import { socket } from '../lib/socket';
 import PageHeader from './PageHeader';
 import game4 from '../assets/lobby/game-4.svg';
@@ -14,33 +15,34 @@ const CODE_LENGTH = 6;
 const EMPTY_DIGITS = Array.from({ length: CODE_LENGTH }, () => '');
 
 function RoomCard({ room, disabled, onJoin }) {
-  const maxPlayers = Math.min(room.maxPlayers || 4, 4);
+  const maxPlayers = Math.min(room.maxPlayers || ROOM_MAX_PLAYERS, ROOM_MAX_PLAYERS);
   const currentPlayers = Math.min(room.currentPlayers || 0, maxPlayers);
   const full = currentPlayers >= maxPlayers;
 
   return (
-    <div className="relative h-[60px] w-full shrink-0 rounded-[18px] border-[3px] border-brand-dark bg-gradient-to-b from-white to-[#CADBFA] shadow-[0_5px_0_#0A1A4A]">
-      <p className="absolute left-[18px] top-[4px] max-w-[150px] truncate text-[20px] font-extrabold leading-[40px] text-[#12307A]">
-        {room.name}
-      </p>
+    <div className="flex h-[60px] w-full shrink-0 items-center gap-3 rounded-[18px] border-[3px] border-brand-dark bg-gradient-to-b from-white to-[#CADBFA] px-[14px] shadow-[0_5px_0_#0A1A4A]">
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[20px] font-extrabold leading-[24px] text-[#12307A]">
+          {room.name}
+        </p>
+        <p className="mt-[1px] text-[11.5px] font-bold leading-[15px] text-[#12307A]">
+          {currentPlayers}/{maxPlayers} pemain
+        </p>
+      </div>
 
-      <p className="absolute left-[18px] top-[38px] text-[11.5px] font-bold leading-[15px] text-[#12307A]">
-        {currentPlayers}/{maxPlayers} pemain
-      </p>
-
-      <div className="absolute left-[170px] top-[25px] flex gap-[7px]">
+      <div className="flex shrink-0 items-center gap-[6px]">
         {Array.from({ length: maxPlayers }).map((_, index) => (
           <img
             key={index}
             src={index < currentPlayers ? game5 : game4}
             alt=""
-            className="h-[17px] w-[17px]"
+            className="h-[17px] w-[17px] shrink-0"
           />
         ))}
       </div>
 
       {full ? (
-        <span className="absolute right-[12px] top-[14px] grid h-[33px] w-[78px] place-items-center rounded-[18px] border-[3px] border-brand-dark bg-[#C0C0C0] text-[12px] font-extrabold leading-[23px] text-[#12307A] shadow-[0_3px_0_#0A1A4A]">
+        <span className="grid h-[33px] w-[78px] shrink-0 place-items-center rounded-[18px] border-[3px] border-brand-dark bg-[#C0C0C0] text-[12px] font-extrabold leading-[23px] text-[#12307A] shadow-[0_3px_0_#0A1A4A]">
           PENUH
         </span>
       ) : (
@@ -48,7 +50,7 @@ function RoomCard({ room, disabled, onJoin }) {
           type="button"
           disabled={disabled}
           onClick={() => onJoin(room.code)}
-          className="absolute right-[12px] top-[14px] h-[33px] w-[78px] rounded-[18px] border-[3px] border-brand-dark bg-gradient-to-b from-[#FFE96B] to-[#FFB619] text-[12px] font-extrabold leading-[23px] text-[#12307A] shadow-[0_3px_0_#0A1A4A] active:translate-y-[1px] active:shadow-[0_2px_0_#0A1A4A] disabled:opacity-60"
+          className="h-[33px] w-[78px] shrink-0 rounded-[18px] border-[3px] border-brand-dark bg-gradient-to-b from-[#FFE96B] to-[#FFB619] text-[12px] font-extrabold leading-[23px] text-[#12307A] shadow-[0_3px_0_#0A1A4A] active:translate-y-[1px] active:shadow-[0_2px_0_#0A1A4A] disabled:opacity-60"
         >
           GABUNG
         </button>

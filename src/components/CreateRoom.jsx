@@ -175,35 +175,38 @@ export default function CreateRoom({ user, onCreated, onBackToJoin }) {
 
           <p className={`mt-[27px] ${LABEL}`}>Permainan</p>
 
-          <div className="relative mt-[13px] h-[67px] w-full rounded-[18px] border-[3px] border-brand-dark bg-gradient-to-b from-white to-[#CADBFA] shadow-[0_5px_0_#0A1A4A]">
-            {GAME_ICONS.map((icon, index) => (
-              <div
-                key={icon}
-                className="absolute top-[18.5px] h-[30px] w-[30px]"
-                style={{ left: `${19 + index * 38}px` }}
-              >
-                <img
-                  src={icon}
-                  alt=""
-                  className="absolute -left-[2.5px] -top-[2.5px] h-[35px] w-[35px]"
-                />
-                <span className="absolute inset-0 grid place-items-center text-[14px] font-extrabold leading-[18px] text-white">
-                  {index + 1}
-                </span>
-              </div>
-            ))}
+          <div className="mt-[13px] flex min-h-[67px] w-full items-center gap-3 rounded-[18px] border-[3px] border-brand-dark bg-gradient-to-b from-white to-[#CADBFA] px-[14px] py-[10px] shadow-[0_5px_0_#0A1A4A]">
+            <div className="flex shrink-0 items-center gap-2">
+              {GAME_ICONS.map((icon, index) => (
+                <div
+                  key={icon}
+                  className="relative grid h-[30px] w-[30px] shrink-0 place-items-center rounded-full"
+                >
+                  <img
+                    src={icon}
+                    alt=""
+                    className="absolute inset-0 h-full w-full rounded-full object-contain"
+                  />
+                  <span className="relative z-10 text-[14px] font-extrabold leading-none text-white">
+                    {index + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
 
-            <p className="absolute left-[139px] top-px text-[17px] font-extrabold leading-[22px] text-[#12307A]">
-              3 Ronde Berurutan
-            </p>
-            <p className="absolute left-[139px] top-[26px] w-[170px] text-[11px] font-bold leading-[14px] text-[#12307A]">
-              Tanpa Aturan · Mutex · Semaphore
-            </p>
+            <div className="min-w-0 flex-1 text-center">
+              <p className="text-[17px] font-extrabold leading-[22px] text-[#12307A]">
+                2 Ronde Berurutan
+              </p>
+              <p className="mt-[2px] text-[11px] font-bold leading-[14px] text-[#12307A]">
+                Tanpa Aturan · Mutex · Semaphore
+              </p>
+            </div>
 
             <img
               src={lockIconLg}
               alt=""
-              className="absolute right-[21px] top-[22px] h-[22px] w-5"
+              className="h-[22px] w-5 shrink-0"
             />
           </div>
 

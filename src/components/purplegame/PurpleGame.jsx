@@ -1,167 +1,301 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { socket } from '../../lib/socket';
+import { REQUIRED_PLAYERS } from '../../config/gameRules';
 import { PURPLE_ROUNDS, PLAYERS, initialScores, initialRoundMetrics } from './gameConfig';
 import ArenaScreen from './ArenaScreen';
-import TimeUpScreen from './TimeUpScreen';
+import RuleIntroScreen from './RuleIntroScreen';
 import ResultScreen from './ResultScreen';
+import CalculatingScreen from './CalculatingScreen';
+import SummaryScreen from './SummaryScreen';
 import IntroScreen from './IntroScreen';
+import SettingsScreen from './SettingsScreen';
 
-export default function PurpleGame({ roomState, userId, onExit }) {
-  const [phase, setPhase] = useState('intro'); // intro | arena | timeup | result
-  const [roundIndex, setRoundIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(PURPLE_ROUNDS[0].duration);
-  const [scores, setScores] = useState(initialScores());
-  const [roundScores, setRoundScores] = useState(initialRoundMetrics());
-  const [boomCount, setBoomCount] = useState(0);
-  const [toast, setToast] = useState('');
-  const [inRing, setInRing] = useState([]); // player keys currently in critical section/ring
-  const [boom, setBoom] = useState(false);
-  const [heldSlots, setHeldSlots] = useState([]); // for mutex/semaphore visual
-  const [waitIconFor, setWaitIconFor] = useState(null);
-  const timerRef = useRef(null);
+const MINIGAME_NUMBER = 1;
+const SEMAPHORE_SLOTS = 2;
+const EMPTY_PLAYERS = [];
 
-  const round = PURPLE_ROUNDS[roundIndex];
-  const myPlayerIndex = Math.max(0, (roomState?.players || []).findIndex((p) => p.userId === userId));
-  const myKey = PLAYERS[myPlayerIndex % 4].key;
-
-  useEffect(() => {
-    if (phase !== 'arena') return undefined;
-    if (timeLeft <= 0) {
-      setPhase('timeup');
-      return undefined;
-    }
-    timerRef.current = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
-    return () => clearTimeout(timerRef.current);
-  }, [phase, timeLeft]);
-
-  useEffect(() => {
-    if (!toast) return undefined;
-    const t = setTimeout(() => setToast(''), 1500);
-    return () => clearTimeout(t);
-  }, [toast]);
-
-  function startGame() {
-    setPhase('arena');
+// Socket.IO serialises snapshots to JSON, so every object/array arrives with a
+// brand-new reference even when its content did not change. Compare by value
+// before calling setState to avoid re-rendering the arena ~20x/sec for nothing.
+function deepEqual(a, b) {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== 'object' || a === null || typeof b !== 'object' || b === null) {
+    return false;
   }
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  return aKeys.every(
+    (key) =>
+      Object.prototype.hasOwnProperty.call(b, key) && deepEqual(a[key], b[key]),
+  );
+}
 
-  function advanceFromTimeUp() {
-    if (roundIndex < PURPLE_ROUNDS.length - 1) {
-      const next = roundIndex + 1;
-      setRoundIndex(next);
-      setTimeLeft(PURPLE_ROUNDS[next].duration);
-      setInRing([]);
-      setHeldSlots([]);
-      setBoom(false);
-      setPhase('arena');
-    } else {
-      setPhase('result');
-    }
-  }
+function initialSnapshotState() {
+  return {
+    phase: 'intro',
+    roundIndex: 0,
+    timeLeft: PURPLE_ROUNDS[0].duration,
+    scores: initialScores(),
+    roundScores: initialRoundMetrics(),
+    boomCount: 0,
+    boomByRound: PURPLE_ROUNDS.map(() => 0),
+    boomByPlayer: initialScores(),
+    toast: '',
+    inRing: [],
+    boom: false,
+    heldSlots: [],
+    waiting: [],
+    stunned: [],
+    fighters: PLAYERS.reduce(
+      (acc, player) => ({ ...acc, [player.key]: { step: 0, walking: true } }),
+      {},
+    ),
+    walkFrame: 1,
+    timeUpActive: false,
+    eventLog: [],
+    logStep: 0,
+  };
+}
 
-  function recordScore(playerKey, delta) {
-    setScores((prev) => ({ ...prev, [playerKey]: prev[playerKey] + delta }));
-    setRoundScores((prev) => {
-      const copy = { ...prev, [playerKey]: [...prev[playerKey]] };
-      copy[playerKey][roundIndex] = Math.max(0, copy[playerKey][roundIndex] + delta);
-      return copy;
+export default function PurpleGame({ roomCode, roomState, userId, onExit }) {
+  const [snap, setSnap] = useState(initialSnapshotState);
+  const [showSettings, setShowSettings] = useState(false);
+  const [walkFrame, setWalkFrame] = useState(1);
+  const [punchPending, setPunchPending] = useState(false);
+  const [punchSequence, setPunchSequence] = useState(0);
+
+  const snapRef = useRef(initialSnapshotState());
+  const pendingPunchRef = useRef(false);
+  const punchPendingTimerRef = useRef(null);
+
+  const roomPlayers = roomState?.players || EMPTY_PLAYERS;
+  const meInfo = roomState?.me || {};
+  const myId = meInfo.userId || userId;
+  const me = roomPlayers.find((player) => player.userId === myId);
+  const isHost = meInfo.isHost ?? Boolean(me?.isHost);
+
+  // Warna kursi berasal dari server (avatarColor), bukan index lokal.
+  const roster = useMemo(() => {
+    if (!roomPlayers.length) return PLAYERS;
+    return roomPlayers.map((player) => {
+      const seat =
+        PLAYERS.find((item) => item.key === player.avatarColor) || PLAYERS[0];
+      return {
+        ...seat,
+        userId: player.userId,
+        name: player.name,
+        avatarColor: player.avatarColor,
+      };
     });
-  }
+  }, [roomPlayers]);
+  const myKey = me?.avatarColor || PLAYERS[0].key;
+  const hasFullRoom = roomPlayers.length >= REQUIRED_PLAYERS;
 
-  function handlePunch(playerKey) {
-    if (phase !== 'arena') return;
-    const mode = round.mode;
-    if (mode === 'tanpa-aturan') {
-      setInRing((prev) => {
-        const next = [...prev, playerKey];
-        if (next.length >= 2) {
-          setBoom(true);
-          setBoomCount((c) => c + 1);
-          setToast('RACE CONDITION! BOOM!');
-          // penalty for colliding players in this simplistic model
-          next.forEach((k) => recordScore(k, -1));
-          setTimeout(() => {
-            setBoom(false);
-            setInRing([]);
-          }, 700);
-          return next;
-        }
-        recordScore(playerKey, 1);
-        setTimeout(() => setInRing((cur) => cur.filter((k) => k !== playerKey)), 350);
-        return next;
-      });
-      return;
-    }
+  const displayRound = useMemo(
+    () => ({
+      ...PURPLE_ROUNDS[snap.roundIndex],
+      locks: snap.roundIndex === 2 ? SEMAPHORE_SLOTS : PURPLE_ROUNDS[snap.roundIndex].locks,
+    }),
+    [snap.roundIndex],
+  );
 
-    if (mode === 'mutex') {
-      setHeldSlots((prev) => {
-        if (prev.length >= 1) {
-          setToast('Kunci sedang dipakai! Tunggu.');
-          setWaitIconFor(playerKey);
-          setTimeout(() => setWaitIconFor(null), 900);
-          return prev;
-        }
-        const next = [playerKey];
-        setInRing([playerKey]);
-        recordScore(playerKey, 1);
-        setTimeout(() => {
-          setHeldSlots([]);
-          setInRing([]);
-        }, 900);
-        return next;
-      });
-      return;
-    }
+  const clearPunchPending = useCallback(() => {
+    if (punchPendingTimerRef.current) clearTimeout(punchPendingTimerRef.current);
+    punchPendingTimerRef.current = null;
+    pendingPunchRef.current = false;
+    setPunchPending(false);
+  }, []);
 
-    if (mode === 'semaphore') {
-      setHeldSlots((prev) => {
-        if (prev.includes(playerKey)) return prev;
-        if (prev.length >= 2) {
-          setToast('Gerbang penuh! Tunggu giliran.');
-          setWaitIconFor(playerKey);
-          setTimeout(() => setWaitIconFor(null), 900);
-          return prev;
-        }
-        const next = [...prev, playerKey];
-        setInRing(next);
-        recordScore(playerKey, 1);
-        setTimeout(() => {
-          setHeldSlots((cur) => cur.filter((k) => k !== playerKey));
-          setInRing((cur) => cur.filter((k) => k !== playerKey));
-        }, 900);
-        return next;
+  const command = useCallback(
+    (type, extra = {}) => {
+      if (!socket.connected || !roomCode) return;
+      socket.emit('minigame:command', {
+        code: roomCode,
+        minigame: MINIGAME_NUMBER,
+        type,
+        ...extra,
       });
-    }
-  }
+    },
+    [roomCode],
+  );
+
+  // Single source of truth: the backend runs the whole simulation and sends
+  // identical snapshots to every seat. No browser runs game logic locally.
+  useEffect(() => {
+    const applyState = (payload) => {
+      if (
+        payload?.code &&
+        String(payload.code).toUpperCase() !== String(roomCode || '').toUpperCase()
+      ) {
+        return;
+      }
+      if (payload?.minigame && payload.minigame !== MINIGAME_NUMBER) return;
+      const next = payload?.state;
+      if (!next || typeof next.phase !== 'string') return;
+      if (deepEqual(snapRef.current, next)) return;
+
+      snapRef.current = next;
+      setSnap(next);
+
+      const authoritativeMine = myKey ? next.fighters?.[myKey] : null;
+      if (
+        pendingPunchRef.current &&
+        authoritativeMine &&
+        (authoritativeMine.step > 0 || !authoritativeMine.walking)
+      ) {
+        clearPunchPending();
+      }
+      if (next.phase !== 'arena') clearPunchPending();
+    };
+
+    const sync = () => {
+      if (socket.connected && roomCode) {
+        socket.emit('minigame:command', {
+          code: roomCode,
+          minigame: MINIGAME_NUMBER,
+          type: 'sync',
+        });
+      }
+    };
+
+    socket.on('minigame:state', applyState);
+    socket.on('connect', sync);
+    sync();
+    return () => {
+      socket.off('minigame:state', applyState);
+      socket.off('connect', sync);
+    };
+  }, [clearPunchPending, myKey, roomCode]);
+
+  // Walk poses are cosmetic and run locally; positions always come from the
+  // authoritative `fighters` field.
+  useEffect(() => {
+    if (snap.phase !== 'arena' && snap.phase !== 'rule') return undefined;
+    const id = setInterval(() => setWalkFrame((frame) => (frame % 4) + 1), 320);
+    return () => clearInterval(id);
+  }, [snap.phase]);
+
+  useEffect(
+    () => () => {
+      if (punchPendingTimerRef.current) clearTimeout(punchPendingTimerRef.current);
+    },
+    [],
+  );
+
+  const handlePunch = useCallback(() => {
+    if (!hasFullRoom || snap.phase !== 'arena' || snap.timeUpActive) return;
+    const mine = snap.fighters?.[myKey];
+    if (!mine || mine.step !== 0 || !mine.walking) return;
+    if (snap.stunned.includes(myKey)) return;
+
+    // Instant button feedback only. The backend decides whether this punch
+    // reaches the ring, gets blocked at the gate, or triggers a BOOM.
+    pendingPunchRef.current = true;
+    setPunchPending(true);
+    setPunchSequence((value) => value + 1);
+    if (punchPendingTimerRef.current) clearTimeout(punchPendingTimerRef.current);
+    punchPendingTimerRef.current = setTimeout(() => {
+      punchPendingTimerRef.current = null;
+      pendingPunchRef.current = false;
+      setPunchPending(false);
+    }, 600);
+
+    socket.emit('minigame:input', {
+      code: roomCode,
+      minigame: MINIGAME_NUMBER,
+      type: 'punch',
+      key: myKey,
+      userId: myId,
+    });
+  }, [hasFullRoom, myId, myKey, roomCode, snap.fighters, snap.phase, snap.stunned, snap.timeUpActive]);
 
   const finalRanking = useMemo(() => {
-    const trophy = (i) => roundScores[i[0]].filter((v) => v > 0).length; // simplistic
-    return [...PLAYERS]
-      .map((p) => ({ ...p, score: scores[p.key], rounds: roundScores[p.key], trophies: trophy([p.key]) }))
+    const trophy = (key) => snap.roundScores[key].filter((value) => value > 0).length;
+    return [...roster]
+      .map((player) => ({
+        ...player,
+        score: snap.scores[player.key] ?? 0,
+        rounds: snap.roundScores[player.key] ?? [0, 0, 0],
+        trophies: trophy(player.key),
+      }))
       .sort((a, b) => b.score - a.score || b.trophies - a.trophies);
-  }, [scores, roundScores]);
+  }, [roster, snap.roundScores, snap.scores]);
 
   return (
-    <div className="flex h-full w-full flex-col font-['Baloo_2']">
-      {phase === 'intro' && <IntroScreen onStart={startGame} />}
-      {phase === 'arena' && (
-        <ArenaScreen
-          round={round}
-          timeLeft={timeLeft}
-          scores={scores}
-          myKey={myKey}
-          players={roomState?.players || []}
-          onPunch={handlePunch}
-          toast={toast}
-          inRing={inRing}
-          boom={boom}
-          heldSlots={heldSlots}
-          waitIconFor={waitIconFor}
+    <div className="flex h-full min-h-0 w-full flex-col overflow-hidden font-['Lilita_One']">
+      {snap.phase === 'intro' && !showSettings && (
+        <IntroScreen
+          onStart={() => {
+            if (isHost) setShowSettings(true);
+          }}
+          isHost={isHost}
         />
       )}
-      {phase === 'timeup' && (
-        <TimeUpScreen round={round} onContinue={advanceFromTimeUp} />
+      {snap.phase === 'intro' && showSettings && isHost && (
+        <SettingsScreen
+          onBack={() => setShowSettings(false)}
+          onStart={({ duration }) => {
+            setShowSettings(false);
+            command('start', { duration });
+          }}
+        />
       )}
-      {phase === 'result' && (
-        <ResultScreen ranking={finalRanking} boomCount={boomCount} onExit={onExit} />
+      {snap.phase === 'rule' && (
+        <RuleIntroScreen
+          round={displayRound}
+          timeLeft={snap.timeLeft}
+          scores={snap.scores}
+          myKey={myKey}
+          players={roster}
+          onStart={() => command('begin_round')}
+          isHost={isHost}
+        />
+      )}
+      {snap.phase === 'arena' && (
+        <ArenaScreen
+          round={displayRound}
+          timeLeft={snap.timeLeft}
+          scores={snap.scores}
+          myKey={myKey}
+          players={roster}
+          onPunch={handlePunch}
+          toast={snap.toast}
+          boom={snap.boom}
+          heldSlots={snap.heldSlots}
+          waiting={snap.waiting}
+          stunned={snap.stunned}
+          eventLog={snap.eventLog}
+          logStep={snap.logStep}
+          fighters={snap.fighters}
+          walkFrame={walkFrame}
+          speed={1}
+          timeUp={snap.timeUpActive}
+          punchPending={punchPending}
+          punchSequence={punchSequence}
+          predictLocal
+          hasFullRoom={hasFullRoom}
+        />
+      )}
+      {snap.phase === 'calculating' && (
+        <CalculatingScreen onDone={() => command('calculated')} />
+      )}
+      {snap.phase === 'result' && (
+        <ResultScreen
+          ranking={finalRanking}
+          boomCount={snap.boomCount}
+          boomByPlayer={snap.boomByPlayer}
+          onOpenSummary={() => command('summary')}
+          onExit={onExit}
+        />
+      )}
+      {snap.phase === 'summary' && (
+        <SummaryScreen
+          rounds={PURPLE_ROUNDS}
+          boomByRound={snap.boomByRound}
+          roundScores={snap.roundScores}
+          onBack={() => command('result')}
+        />
       )}
     </div>
   );

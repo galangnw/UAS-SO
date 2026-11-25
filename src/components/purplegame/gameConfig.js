@@ -1,3 +1,5 @@
+// Konfigurasi ronde. `locks` = jumlah slot kunci di ring:
+// 0 = Tanpa Aturan, 1 = Mutex, 2 = Semaphore.
 export const PURPLE_ROUNDS = [
   {
     round: 1,
@@ -6,8 +8,15 @@ export const PURPLE_ROUNDS = [
     subtitle: 'RACE CONDITION! Dua petinju masuk bersamaan.',
     badge: 'Ronde 1/3',
     duration: 20,
-    slots: 0,
+    locks: 0,
     nextLabel: 'MUTEX',
+    rule: {
+      cardTitle: 'Ronde 1: TANPA ATURAN',
+      paragraphs: [
+        'Lari ke piala di tengah! Kalau dua petinju ada di zona emas bersamaan, ring MELEDAK dan semuanya terpental. Itu race condition.',
+        'Tekan PUKUL! sebanyak-banyaknya supaya petinjumu maju. Ambil piala di tengah = 1 poin, lalu kembali ke pojok. Waktu 20 detik.',
+      ],
+    },
   },
   {
     round: 2,
@@ -16,8 +25,15 @@ export const PURPLE_ROUNDS = [
     subtitle: 'Satu kunci, satu petinju di dalam ring.',
     badge: 'Ronde 2/3',
     duration: 20,
-    slots: 1,
+    locks: 1,
     nextLabel: 'SEMAPHORE',
+    rule: {
+      cardTitle: 'Ronde 2: MUTEX',
+      paragraphs: [
+        'Satu kunci, satu petinju di dalam ring. Petinju lain harus menunggu sampai kunci dilepas.',
+        'Tekan PUKUL! untuk maju. Kalau kunci sedang dipakai, petinjumu menunggu di luar zona emas. Waktu 20 detik.',
+      ],
+    },
   },
   {
     round: 3,
@@ -26,27 +42,24 @@ export const PURPLE_ROUNDS = [
     subtitle: 'Dua kunci, dua petinju boleh di dalam ring.',
     badge: 'Ronde 3/3',
     duration: 20,
-    slots: 2,
+    locks: 2,
     nextLabel: null,
+    rule: {
+      cardTitle: 'Ronde 3: SEMAPHORE',
+      paragraphs: [
+        'Dua kunci tersedia. Maksimal dua petinju boleh berada di dalam ring bersamaan.',
+        'Kalau kedua kunci terpakai, petinju berikutnya harus menunggu. Tekan PUKUL! untuk maju dan rebut piala. Waktu 20 detik.',
+      ],
+    },
   },
 ];
 
-export const PLAYERS = [
-  { key: 'merah', name: 'Merah', color: '#ff0000', labelColor: 'text-[red]' },
-  { key: 'kuning', name: 'Kuning', color: '#fffb00', labelColor: 'text-[#fffb00]' },
-  { key: 'biru', name: 'Biru', color: '#0040ff', labelColor: 'text-[#0040ff]' },
-  { key: 'hijau', name: 'Hijau', color: '#00d26a', labelColor: 'text-[#00d26a]' },
-];
+import { PLAYERS } from '../../config/playerColors';
 
-export function initialScores() {
-  return { merah: 0, kuning: 0, biru: 0, hijau: 0 };
-}
+export { PLAYERS };
 
-export function initialRoundMetrics() {
-  return {
-    merah: [0, 0, 0],
-    kuning: [0, 0, 0],
-    biru: [0, 0, 0],
-    hijau: [0, 0, 0],
-  };
-}
+export const initialScores = () =>
+  PLAYERS.reduce((acc, p) => ({ ...acc, [p.key]: 0 }), {});
+
+export const initialRoundMetrics = () =>
+  PLAYERS.reduce((acc, p) => ({ ...acc, [p.key]: [0, 0, 0] }), {});

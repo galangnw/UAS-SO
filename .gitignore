@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+Frontend_SistemOperasi/
+Backend_SistemOperasi/
+.vite/
+.env

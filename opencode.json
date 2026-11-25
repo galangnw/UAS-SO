@@ -1,4 +1,5 @@
 {
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "servers": {
       "figma": {
@@ -6,5 +7,28 @@
         "url": "https://mcp.figma.com/mcp"
       }
     }
-  }
+  },
+  "permissions": [
+    { "action": "figma_*", "resource": "*", "effect": "deny" },
+    { "action": "figma_create_session", "resource": "*", "effect": "allow" },
+    { "action": "figma_download_assets", "resource": "*", "effect": "allow" },
+    { "action": "figma_export_video", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_code_connect_map", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_code_connect_suggestions", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_context_for_code_connect", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_design_context", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_figjam", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_generative_plugin", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_libraries", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_metadata", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_motion_context", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_screenshot", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_shader", "resource": "*", "effect": "allow" },
+    { "action": "figma_get_variable_defs", "resource": "*", "effect": "allow" },
+    { "action": "figma_list_file_shaders", "resource": "*", "effect": "allow" },
+    { "action": "figma_list_generative_plugins", "resource": "*", "effect": "allow" },
+    { "action": "figma_list_shaders", "resource": "*", "effect": "allow" },
+    { "action": "figma_search_design_system", "resource": "*", "effect": "allow" },
+    { "action": "figma_whoami", "resource": "*", "effect": "allow" }
+  ]
 }

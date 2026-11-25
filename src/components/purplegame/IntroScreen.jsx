@@ -1,51 +1,203 @@
-export default function IntroScreen({ onStart }) {
+// Opening "Stick Brawl" — ditata ulang persis mengikuti Figma 1:173.
+// Kanvas 390x844 diskalakan oleh ResponsiveStage, jadi koordinat absolut aman.
+import arenaGlow from '../../assets/game/arena-ring.png';
+import centerTrophy from '../../assets/game/arena-bg.png';
+
+// Ini adalah aset petinju intro yang asli (frame *_jalan_2 di Figma), BUKAN
+// sprite jalan milik ronde. Sprite ronde memakai full-frame *_jalan_1.
+import jalanMerah from '../../assets/game/intro-jalan-merah2.svg';
+import jalanKuning from '../../assets/game/intro-jalan-kuning2.svg';
+import jalanBiru from '../../assets/game/intro-jalan-biru2.svg';
+import jalanHijau from '../../assets/game/intro-jalan-hijau2.svg';
+
+const BG_GRADIENT =
+  'bg-gradient-to-b from-[rgba(24,4,61,0.96)] to-[rgba(46,9,113,0.96)]';
+
+const ROUND_CARDS = [
+  {
+    n: '1',
+    label: 'Tanpa Aturan',
+    left: 28,
+    numberLeft: 63.5,
+    labelLeft: 68,
+    color: 'text-[#ff4d4d]',
+  },
+  {
+    n: '2',
+    label: 'Mutex',
+    left: 156,
+    numberLeft: 193.5,
+    labelLeft: 194,
+    color: 'text-[#0026ff]',
+  },
+  {
+    n: '3',
+    label: 'Semaphore',
+    left: 285,
+    numberLeft: 323.5,
+    labelLeft: 324,
+    color: 'text-[#00ff08]',
+  },
+];
+
+// Posisi/ukuran wrapper dan rotasi diambil langsung dari Figma 1:173.
+// clipWidth/clipHeight adalah kotak "Jalan" 71.24x117.38 tempat sprite
+// intro ditempatkan sebelum diputar.
+const FIGHTERS = [
+  {
+    sprite: jalanKuning,
+    left: 73.2,
+    top: 362.59,
+    width: 132.694,
+    height: 134.001,
+    rotate: 136.15,
+  },
+  {
+    sprite: jalanBiru,
+    left: 168,
+    top: 359,
+    width: 133.099,
+    height: 133.637,
+    rotate: -135.47,
+  },
+  {
+    sprite: jalanMerah,
+    left: 73,
+    top: 452,
+    width: 133.66,
+    height: 133.078,
+    rotate: 45.51,
+  },
+  {
+    sprite: jalanHijau,
+    left: 171,
+    top: 454,
+    width: 134.241,
+    height: 132.402,
+    rotate: -46.61,
+  },
+];
+
+function Fighter({ sprite, left, top, width, height, rotate }) {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-gradient-to-b from-[rgba(24,4,61,0.96)] to-[rgba(46,9,113,0.96)] font-['Baloo_2']">
-      <div className="-translate-x-1/2 absolute left-1/2 top-[82px] rotate-[-2.86deg]">
-        <p className="text-center font-['Lilita_One'] text-[64px] leading-[1] text-[#fff1cf] [text-shadow:0_4px_0_#0A1A4A]">STICK</p>
+    <div
+      className="pointer-events-none absolute flex select-none items-center justify-center"
+      style={{ left, top, width, height }}
+    >
+      <div style={{ transform: `rotate(${rotate}deg)` }}>
+        <div className="relative overflow-hidden" style={{ width: 71.24, height: 117.38 }}>
+          <div
+            className="absolute"
+            style={{ top: '39.5%', right: '11.67%', bottom: '9.25%', left: '13.33%' }}
+          >
+            <div
+              className="absolute"
+              style={{ top: '-4.16%', right: '-2.46%', bottom: '-1.68%', left: '-4.68%' }}
+            >
+              <img
+                src={sprite}
+                alt=""
+                draggable="false"
+                className="block h-full w-full select-none"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="-translate-x-1/2 absolute left-1/2 top-[134px] rotate-[-4.2deg]">
-        <p className="text-center font-['Lilita_One'] text-[96px] leading-[0.85] text-[#ffc83d] [text-shadow:0_4px_0_#0A1A4A]">BRAWL</p>
+    </div>
+  );
+}
+
+export default function IntroScreen({ onStart, isHost = false }) {
+  return (
+    <div
+      className={`relative h-full w-full overflow-hidden ${BG_GRADIENT} font-['Lilita_One']`}
+    >
+      {/* Judul */}
+      <div
+        className="absolute flex -translate-x-1/2 items-center justify-center"
+        style={{ left: 194.95, top: 82, width: 197.905, height: 92.59 }}
+      >
+        <div className="flex-none -rotate-[2.86deg]">
+          <p className="text-center text-[64px] leading-[normal] text-[#fff1cf] text-title-outline [text-shadow:0_4px_0_#0A1A4A]">
+            STICK
+          </p>
+        </div>
       </div>
-      <p className="absolute left-1/2 top-[267px] w-[365px] max-w-[92%] -translate-x-1/2 text-center font-['Lilita_One'] text-[13px] leading-[1.4] text-[#c5cee1]">
+      <div
+        className="absolute flex -translate-x-1/2 items-center justify-center"
+        style={{ left: 195, top: 134.52, width: 349.152, height: 107.951 }}
+      >
+        <div className="flex-none -rotate-[4.2deg]">
+          <p className="text-center text-[96px] leading-[normal] text-[#ffc83d] text-title-outline [text-shadow:0_4px_0_#0A1A4A]">
+            BRAWL
+          </p>
+        </div>
+      </div>
+      <p
+        className="absolute -translate-x-1/2 text-center text-[13px] leading-[normal] text-[#c5cee1]"
+        style={{ left: 194.5, top: 267, width: 365, height: 25 }}
+      >
         Rebut piala di tengah ring. Pukul, lari, dan belajar race condition.
       </p>
 
-      <div className="absolute left-1/2 top-[320px] h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_30%_30%,#7b3fc2_0%,#3a146f_45%,#1a0636_100%)] border-[6px] border-[#b07cff]/30 shadow-[0_0_0_8px_rgba(255,255,255,0.03)_inset]">
-        <div className="absolute inset-[18%] rounded-full border-[6px] border-[#ffcf5a]/60" />
-        <div className="absolute left-1/2 top-1/2 h-[72px] w-[72px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2b115c] border-2 border-[#7b4fd1] grid place-items-center">
-          <span className="font-['Lilita_One'] text-[#ffd36b] text-lg">🏆</span>
+      {/* Ring, petinju intro asli, dan piala */}
+      <img
+        src={arenaGlow}
+        alt=""
+        className="pointer-events-none absolute object-cover"
+        style={{ left: 14, top: 300, width: 348, height: 348 }}
+      />
+      {FIGHTERS.map((fighter) => (
+        <Fighter key={fighter.sprite} {...fighter} />
+      ))}
+      <img
+        src={centerTrophy}
+        alt=""
+        className="pointer-events-none absolute object-contain"
+        style={{ left: 149, top: 435, width: 77, height: 77 }}
+      />
+
+      {/* Tombol mulai / status tamu */}
+      {isHost ? (
+        <button
+          type="button"
+          onClick={onStart}
+          className="absolute rounded-[10px] border-b-[5px] border-black bg-[#ff6262] text-center text-[28px] leading-[normal] text-white active:translate-y-[2px] active:border-b-[3px]"
+          style={{ left: 28, top: 659, width: 334, height: 64 }}
+        >
+          MULAI BERTARUNG
+        </button>
+      ) : (
+        <div
+          className="absolute grid place-items-center rounded-[10px] border border-black/40 bg-[#230063] px-4 text-center text-[14px] leading-tight text-[#c5cee1]"
+          style={{ left: 28, top: 659, width: 334, height: 64 }}
+        >
+          Menunggu host memulai pertarungan...
         </div>
-        {[
-          { c: 'bg-red-500', p: 'left-[22%] top-[55%]' },
-          { c: 'bg-yellow-400', p: 'left-[35%] top-[30%]' },
-          { c: 'bg-blue-500', p: 'left-[58%] top-[28%]' },
-          { c: 'bg-green-500', p: 'left-[68%] top-[55%]' },
-        ].map((f, i) => (
-          <div key={i} className={`absolute ${f.p} h-10 w-8 rounded-full ${f.c} border-2 border-black/30`} />
-        ))}
-      </div>
+      )}
 
-      <button
-        type="button"
-        onClick={onStart}
-        className="absolute left-1/2 top-[659px] h-[64px] w-[334px] max-w-[86%] -translate-x-1/2 rounded-[10px] border-b-[5px] border-black bg-[#ff6262] font-['Lilita_One'] text-[28px] text-white shadow-[0_4px_0_#00000040] active:translate-y-[2px]"
-      >
-        MULAI BERTARUNG
-      </button>
-
-      <div className="absolute left-1/2 top-[744px] flex w-[334px] max-w-[86%] -translate-x-1/2 gap-3">
-        {[
-          { n: '1', label: 'Tanpa Aturan', color: 'text-[red]' },
-          { n: '2', label: 'Mutex', color: 'text-[#0026ff]' },
-          { n: '3', label: 'Semaphore', color: 'text-[#00ff08]' },
-        ].map((m) => (
-          <div key={m.n} className="flex-1 rounded-[5px] border border-black bg-[#230063] py-1 text-center">
-            <p className={`font-['Lilita_One'] text-[28px] leading-[1] ${m.color}`}>{m.n}</p>
-            <p className="font-['Lilita_One'] text-[10px] text-white">{m.label}</p>
-          </div>
-        ))}
-      </div>
+      {/* Kartu ronde */}
+      {ROUND_CARDS.map((card) => (
+        <div key={card.n}>
+          <div
+            className="absolute rounded-[5px] border border-black bg-[#230063]"
+            style={{ left: card.left, top: 744, width: 77, height: 46 }}
+          />
+          <span
+            className={`absolute -translate-x-1/2 text-center text-[28px] leading-[normal] ${card.color}`}
+            style={{ left: card.numberLeft, top: 744, width: 13, height: 28 }}
+          >
+            {card.n}
+          </span>
+          <span
+            className="absolute -translate-x-1/2 text-center text-[10px] leading-[normal] text-white"
+            style={{ left: card.labelLeft, top: 774, width: 64, height: 15 }}
+          >
+            {card.label}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }

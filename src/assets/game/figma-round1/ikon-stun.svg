@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon/stun" clip-path="url(#clip0_0_4)">
+<path id="Vector" d="M16 0.5L17.65 4.73L22.18 4.99L18.66 7.87L19.82 12.26L16 9.8L12.18 12.26L13.34 7.87L9.82 4.99L14.35 4.73L16 0.5Z" fill="#FFD23D" stroke-width="1.6" stroke-linejoin="round" stroke="#17102B"/>
+<path id="Vector_2" d="M7 15.5L8.65 19.73L13.18 19.99L9.66 22.87L10.82 27.26L7 24.8L3.18 27.26L4.34 22.87L0.82 19.99L5.35 19.73L7 15.5Z" fill="#FFD23D" stroke-width="1.6" stroke-linejoin="round" stroke="#17102B"/>
+<path id="Vector_3" d="M25 15.5L26.65 19.73L31.18 19.99L27.66 22.87L28.82 27.26L25 24.8L21.18 27.26L22.34 22.87L18.82 19.99L23.35 19.73L25 15.5Z" fill="#FFD23D" stroke-width="1.6" stroke-linejoin="round" stroke="#17102B"/>
+</g>
+<defs>
+<clipPath id="clip0_0_4">
+<rect width="32" height="32" fill="white"/>
+</clipPath>
+</defs>
+</svg>

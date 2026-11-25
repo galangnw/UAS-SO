@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { REQUIRED_PLAYERS, ROOM_MAX_PLAYERS } from '../config/gameRules';
 import PlayerCard from './PlayerCard';
 import backButton from '../assets/lobby/back-button.svg';
 import chevron from '../assets/lobby/chevron.svg';
@@ -7,7 +8,6 @@ import game2 from '../assets/lobby/game-2.svg';
 import game3 from '../assets/lobby/game-3.svg';
 import sparkle1 from '../assets/lobby/sparkle-1.svg';
 
-const CARD_COLORS = ['pink', 'blue', 'orange', 'yellow'];
 const GAME_ICONS = [game1, game2, game3];
 const GAME_SUBTITLE = 'Tanpa Aturan · Mutex · Semaphore';
 
@@ -76,7 +76,9 @@ export default function Lobby({
   const myId = meInfo.userId || userId;
   const me = players.find((player) => player.userId === myId);
   const isHost = meInfo.isHost ?? Boolean(me?.isHost);
-  const canStart = players.length > 1 && players.every((player) => player.isReady);
+  const maxPlayers = Math.min(room.maxPlayers || ROOM_MAX_PLAYERS, ROOM_MAX_PLAYERS);
+  const allReady = players.length >= REQUIRED_PLAYERS && players.every((player) => player.isReady);
+  const canStart = players.length === REQUIRED_PLAYERS && allReady;
   const code = room.code || roomCode;
 
   const copyCode = async () => {
@@ -112,7 +114,7 @@ export default function Lobby({
             <PlayerCard
               key={player.userId}
               player={player}
-              color={CARD_COLORS[index % CARD_COLORS.length]}
+              color={player.avatarColor}
               decorated={index === 0}
               isMe={player.userId === myId}
               canKick={isHost && player.userId !== myId}
@@ -184,7 +186,9 @@ export default function Lobby({
 
             {!canStart && (
               <p className="mt-[9px] text-center text-[12px] font-extrabold text-white">
-                Menunggu semua pemain siap
+                {players.length < maxPlayers
+                  ? `Menunggu pemain (${players.length}/${maxPlayers})`
+                  : 'Menunggu semua pemain siap'}
               </p>
             )}
           </div>
