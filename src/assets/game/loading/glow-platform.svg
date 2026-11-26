@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="380" height="84" viewBox="0 0 380 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Glow platform" clip-path="url(#clip0_0_94)">
+<path id="Vector" d="M190 84C294.934 84 380 65.196 380 42C380 18.804 294.934 0 190 0C85.0659 0 0 18.804 0 42C0 65.196 85.0659 84 190 84Z" fill="url(#paint0_radial_0_94)"/>
+<ellipse id="Shadow blue" cx="195.5" cy="17.5" rx="56.5" ry="7.5" fill="#081A4D" fill-opacity="0.4"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_94" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(190 42) scale(190 42)">
+<stop stop-color="#6BE8FF" stop-opacity="0.95"/>
+<stop offset="0.55" stop-color="#3DB8F5" stop-opacity="0.55"/>
+<stop offset="1" stop-color="#2A9BEA" stop-opacity="0"/>
+</radialGradient>
+<clipPath id="clip0_0_94">
+<rect width="380" height="84" fill="white"/>
+</clipPath>
+</defs>
+</svg>

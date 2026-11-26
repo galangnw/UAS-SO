@@ -1,0 +1,4 @@
+
+
+export const REQUIRED_PLAYERS = 4;
+export const ROOM_MAX_PLAYERS = REQUIRED_PLAYERS;

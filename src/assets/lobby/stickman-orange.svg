@@ -1,0 +1,27 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="70" height="130" viewBox="0 0 70 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Goyang Host Orange">
+<path id="Vector" d="M35 60L14 87" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" stroke="#0A1A4A"/>
+<path id="Vector_2" d="M35 60L56 63" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" stroke="#0A1A4A"/>
+<path id="Vector_3" d="M35 34L33 89" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" stroke="#0A1A4A"/>
+<path id="Vector_4" d="M33 89L18 116" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" stroke="#0A1A4A"/>
+<path id="Vector_5" d="M33 89L49 116" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" stroke="#0A1A4A"/>
+<path id="Vector_6" d="M35 60L14 87" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" stroke="#D98A3A"/>
+<path id="Vector_7" d="M35 60L56 63" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" stroke="#D98A3A"/>
+<path id="Vector_8" d="M35 34L33 89" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" stroke="#D98A3A"/>
+<path id="Vector_9" d="M33 89L18 116" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" stroke="#D98A3A"/>
+<path id="Vector_10" d="M33 89L49 116" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" stroke="#D98A3A"/>
+<g id="Head">
+<path id="Vector_11" d="M32.5958 56.874C45.2288 58.2018 56.5462 49.0371 57.874 36.4042C59.2018 23.7712 50.0371 12.4538 37.4042 11.126C24.7712 9.79822 13.4538 18.9629 12.126 31.5958C10.7982 44.2288 19.9629 55.5462 32.5958 56.874Z" fill="#0A1A4A"/>
+<path id="Vector_12" d="M32.9094 53.8904C43.8946 55.045 53.7358 47.0758 54.8904 36.0906C56.045 25.1054 48.0758 15.2642 37.0906 14.1096C26.1054 12.955 16.2642 20.9242 15.1096 31.9094C13.955 42.8946 21.9242 52.7358 32.9094 53.8904Z" fill="url(#paint0_radial_0_375)"/>
+<path id="Vector_13" d="M29.9318 24.8198C33.2274 25.1662 36.0394 24.1112 36.2125 22.4634C36.3857 20.8157 33.8545 19.1991 30.559 18.8527C27.2634 18.5063 24.4515 19.5613 24.2783 21.2091C24.1051 22.8569 26.6363 24.4735 29.9318 24.8198Z" fill="white" fill-opacity="0.55"/>
+<path id="Vector_14" d="M19.8426 28.4722L32.7471 34.6375" stroke-width="3.91304" stroke-linecap="round" stroke="white"/>
+<path id="Vector_15" d="M37.0712 35.092L50.9755 31.7445" stroke-width="3.91304" stroke-linecap="round" stroke="white"/>
+</g>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_375" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(29.8691 25.4167) rotate(6) scale(32)">
+<stop stop-color="#FFC266"/>
+<stop offset="1" stop-color="#F39A2B"/>
+</radialGradient>
+</defs>
+</svg>
