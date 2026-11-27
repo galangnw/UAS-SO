@@ -108,7 +108,10 @@ function FighterSprite({
   const motionRef = useRef({ current: safeStep, target: safeStep, last: 0 });
 
   const snapRef = useRef({ waiting, boom, stunned, safeStep });
-  snapRef.current = { waiting, boom, stunned, safeStep };
+
+  useEffect(() => {
+    snapRef.current = { waiting, boom, stunned, safeStep };
+  }, [waiting, boom, stunned, safeStep]);
 
   const predictRef = useRef({ active: false, startedAt: 0 });
   const lastPunchSignalRef = useRef(punchSignal);

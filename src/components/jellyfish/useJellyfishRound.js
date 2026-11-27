@@ -12,6 +12,8 @@ import {
 
 const MOVE_SEND_MS = 120;
 const CATCH_SCAN_MS = 100;
+const SYNC_SNAP_DISTANCE = 60;
+const SYNC_EASE = 0.35;
 
 function getPlayerDef(playerKey) {
   return PLAYER_DEFS.find((p) => p.id === playerKey) || PLAYER_DEFS[0];
@@ -35,14 +37,29 @@ export function calcClientRoundScore(player, finishOrder = [], roundDeadlocks = 
 export function useJellyfishRound({ roomCode, userId, snapshot, requestResult, roundNumber }) {
   const [joystickActive, setJoystickActive] = useState(false);
   const [knobPos, setKnobPos] = useState({ x: 0, y: 0 });
-  const [localPos, setLocalPos] = useState(null);
+  const [posState, setPosState] = useState({ key: null, pos: null });
+
+  const roundKey = `${roomCode}:${roundNumber}`;
+  const localPos = posState.key === roundKey ? posState.pos : null;
 
   const moveDirRef = useRef({ x: 0, y: 0 });
   const joystickRef = useRef(null);
   const localPosRef = useRef(null);
   const lastMoveSentRef = useRef(0);
+  const writeLocalPos = useCallback((pos) => {
+    localPosRef.current = pos;
+    setPosState({ key: roundKey, pos });
+  }, [roundKey]);
   const lastCatchSentRef = useRef({ id: null, at: 0 });
   const baselineRef = useRef({ round: null, byUser: {} });
+  const latestRef = useRef({
+    meX: null,
+    meY: null,
+    meExited: false,
+    meHeldKey: '',
+    targets: [],
+    jellies: [],
+  });
 
   const me = snapshot?.players?.find((p) => p.userId === userId) || null;
   const myDef = getPlayerDef(me?.playerKey || 'P1');
@@ -68,20 +85,43 @@ export function useJellyfishRound({ roomCode, userId, snapshot, requestResult, r
   }, [snapshot, roundNumber]);
 
   useEffect(() => {
+    latestRef.current = {
+      meX,
+      meY,
+      meExited: Boolean(meExited),
+      meHeldKey,
+      targets,
+      jellies: snapshot?.jellies || [],
+    };
+  }, [meX, meY, meExited, meHeldKey, targets, snapshot]);
+
+  useEffect(() => {
+    localPosRef.current = null;
+    moveDirRef.current = { x: 0, y: 0 };
+    lastMoveSentRef.current = 0;
+    lastCatchSentRef.current = { id: null, at: 0 };
+  }, [roomCode, roundNumber]);
+
+  useEffect(() => {
     if (!meId || meX == null || meY == null) return;
     const serverPos = { x: meX, y: meY };
     if (!localPosRef.current) {
-      localPosRef.current = serverPos;
-      setLocalPos(serverPos);
+      writeLocalPos(serverPos);
       return;
     }
 
     const d = dist(localPosRef.current, serverPos);
-    if (d > 28) {
-      localPosRef.current = serverPos;
-      setLocalPos(serverPos);
+    if (d > SYNC_SNAP_DISTANCE) {
+      writeLocalPos(serverPos);
+      return;
     }
-  }, [meX, meY, meId]);
+    if (d > 2) {
+      writeLocalPos({
+        x: localPosRef.current.x + (serverPos.x - localPosRef.current.x) * SYNC_EASE,
+        y: localPosRef.current.y + (serverPos.y - localPosRef.current.y) * SYNC_EASE,
+      });
+    }
+  }, [meX, meY, meId, writeLocalPos]);
 
   const statusFromRequest = (() => {
     if (!requestResult || requestResult.userId !== userId) return null;
@@ -157,18 +197,20 @@ export function useJellyfishRound({ roomCode, userId, snapshot, requestResult, r
     if (e.currentTarget.hasPointerCapture?.(e.pointerId)) updateJoystick(e.clientX, e.clientY);
   }, [updateJoystick]);
 
+  const roundActive = snapshot?.round === roundNumber &&
+    (snapshot?.status === 'playing' || snapshot?.status === 'deadlock_recovery') &&
+    !meExited;
+
   useEffect(() => {
-    if (!roomCode || !userId) return undefined;
-    if (snapshot?.round !== roundNumber) return undefined;
-    if (snapshot?.status !== 'playing' && snapshot?.status !== 'deadlock_recovery') return undefined;
-    if (meExited) return undefined;
+    if (!roomCode || !userId || !roundActive) return undefined;
 
     const id = setInterval(() => {
-      const dir = moveDirRef.current;
+      const latest = latestRef.current;
       const pos = localPosRef.current ||
-        (meX != null && meY != null ? { x: meX, y: meY } : null);
+        (latest.meX != null && latest.meY != null ? { x: latest.meX, y: latest.meY } : null);
       if (!pos) return;
 
+      const dir = moveDirRef.current;
       let next = pos;
       if (dir.x !== 0 || dir.y !== 0) {
         const speed = 10;
@@ -176,8 +218,7 @@ export function useJellyfishRound({ roomCode, userId, snapshot, requestResult, r
           x: clamp(pos.x + dir.x * speed, 20, ARENA_W - 20),
           y: clamp(pos.y + dir.y * speed, 20, ARENA_H - 20),
         };
-        localPosRef.current = next;
-        setLocalPos({ ...next });
+        writeLocalPos(next);
       }
 
       const now = Date.now();
@@ -187,16 +228,18 @@ export function useJellyfishRound({ roomCode, userId, snapshot, requestResult, r
       }
 
       if (socket.connected && now - lastCatchSentRef.current.at >= CATCH_SCAN_MS) {
-        const held = meHeldKey ? meHeldKey.split(',').map(Number) : [];
-
+        const held = latest.meHeldKey ? latest.meHeldKey.split(',').map(Number) : [];
+        const catchPos = latest.meX != null && latest.meY != null
+          ? { x: latest.meX, y: latest.meY }
+          : next;
         const allowBlockedRequest = roundNumber === 1;
-        const targetJellies = (snapshot?.jellies || [])
+        const targetJellies = latest.jellies
           .filter((j) => {
-            if (!targets.includes(j.id) || held.includes(j.id)) return false;
+            if (!latest.targets.includes(j.id) || held.includes(j.id)) return false;
             if (!j.owner) return true;
             return allowBlockedRequest && j.owner !== userId;
           })
-          .map((j) => ({ j, d: dist(next, j) }))
+          .map((j) => ({ j, d: dist(catchPos, j) }))
           .filter((x) => x.d <= CATCH_RADIUS)
           .sort((a, b) => a.d - b.d);
         const candidate = targetJellies[0]?.j;
@@ -208,7 +251,7 @@ export function useJellyfishRound({ roomCode, userId, snapshot, requestResult, r
     }, 80);
 
     return () => clearInterval(id);
-  }, [roomCode, userId, snapshot?.round, snapshot?.status, snapshot?.jellies, meX, meY, meExited, meHeldKey, targets, roundNumber]);
+  }, [roomCode, userId, roundNumber, roundActive, writeLocalPos]);
 
   const handleLepas = useCallback(() => {
     if (!roomCode || !socket.connected) return;
